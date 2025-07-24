@@ -3,15 +3,18 @@ from flask import Flask, request, jsonify, send_from_directory
 from together import Together
 import difflib
 import json
+from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
+CORS(app)
 
-TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
+TOGETHER_API_KEY = "4bea24632ad3b654f0e18c7a9b176c05f6be5a0a0b9baefe1c21565a1e375c6a"
 MODEL = "meta-llama/Llama-Vision-Free"  # Make sure this is the correct model you have access to
 
 client = Together(api_key=TOGETHER_API_KEY)
 
 faq = {
+    "phone number": "you can call or whatsapp us at +971 54 457 2069",
     "what is 48 digital": "48 Digital is a results-driven digital marketing agency offering a full suite of services including SEO, SMM, PPC, ORM, Web Design, AI-driven Voice Search Marketing, UI/UX Design, and Social Media Content Management.",
     "who are your ideal clients": "We work with startups, small businesses, and enterprises across industries who want to grow their online presence, drive traffic, and generate leads or conversions.",
     "services offered": "We offer Search Engine Optimization (SEO), Social Media Marketing (SMM), Pay Per Click Advertising (PPC), Website Design, Voice Search & AI Marketing, UI/UX Design, and Online Reputation Management (ORM).",
@@ -38,7 +41,7 @@ faq = {
     "how do i get started": "Simply book a free consultation or contact us through our website. We’ll assess your goals and suggest the best strategy.",
     "do you offer monthly retainers": "Yes. Most clients choose monthly packages for SEO, SMM, and PPC. We also offer one-time projects such as website design or social media posts.",
     "how do you measure success": "We provide monthly reports with key KPIs such as website traffic, conversion rates, engagement metrics, and ROI on paid campaigns.",
-    "contact information": "You can email us at info@foureight.digital or use the form on our website.",
+    "contact information": "You can email us at info@foureight.digital, call us at +971 54 457 2069 or use the form on our website.",
     "what is your email": "info@foureight.digital",
     "where are you located": "Our office is based in Dubai, United Arab Emirates. Avenue Residence – Building 2, Floor 4.",
     "location": "Our office is based in Dubai, United Arab Emirates. Avenue Residence – Building 2, Floor 4.",
@@ -61,6 +64,7 @@ instructions = """
 Only answer questions about 48 Digital, its services, pricing, or contact information. 
 If the question is not about 48 Digital, say: 'Sorry, I can only answer questions about 48 Digital.'
 Keep answers brief and friendly.
+When user replies with "yes" or "yeah", contiu
 You can use emojis to make responses more engaging.
 """
 
@@ -83,40 +87,39 @@ def home():
 @app.route("/chat", methods=["POST"])
 def chat():
     user_msg = request.json.get("message", "").lower().strip()
-    print(f"Received message: {user_msg}")
+    print(f"[USER] {user_msg}")
 
     # 1. Try FAQ (fuzzy and partial match)
     faq_answer = find_best_faq_match(user_msg, faq)
     if faq_answer:
-        return jsonify({"reply": faq_answer + " 🤖"})
+        bot_reply = faq_answer + " 🤖"
+    else:
+        # 2. Otherwise, use the AI model
+        messages = [
+            {"role": "system", "content": instructions},
+            {"role": "user", "content": user_msg}
+        ]
+        try:
+            response = client.chat.completions.create(
+                model=MODEL,
+                messages=messages,
+            )
+            bot_reply = response.choices[0].message.content.strip()
+            if "<|im_start|>" in bot_reply:
+                bot_reply = bot_reply.split("<|im_start|>")[0].strip()
+            if not bot_reply:
+                bot_reply = "Sorry, I can only answer questions about 48 Digital."
+        except Exception as e:
+            print(f"AI error: {e}")
+            bot_reply = "Sorry, there was an error processing your request."
 
-    # 2. Otherwise, use the AI model
-    messages = [
-        {"role": "system", "content": instructions},
-        {"role": "user", "content": user_msg}
-    ]
+    print(f"[BOT] {bot_reply}")  # Add this line to see bot replies live
 
-    try:
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=messages,
-        )
-        reply = response.choices[0].message.content.strip()
+    # Log the conversation
+    with open("conversation_log.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps({"user": user_msg, "bot": bot_reply}) + "\n")
 
-        # Remove trailing tokens if any
-        if "<|im_start|>" in reply:
-            reply = reply.split("<|im_start|>")[0].strip()
-
-        # Fallback if model returns empty
-        if not reply:
-            reply = "Sorry, I can only answer questions about 48 Digital."
-
-        return jsonify({"reply": reply})
-
-    except Exception as e:
-        print(f"AI error: {e}")
-        return jsonify({"reply": "Sorry, there was an error processing your request."})
-
+    return jsonify({"reply": bot_reply})
 
 @app.route("/feedback", methods=["POST"])
 def feedback():
@@ -124,11 +127,11 @@ def feedback():
     user = data.get("user")
     message = data.get("message")
     feedback_val = data.get("feedback")
-    print(f"Feedback from {user}: {feedback_val} for '{message}'")
+    print(f"[FEEDBACK] User: {user} | Message: '{message}' | Feedback: {feedback_val}")
     with open("feedback_log.jsonl", "a", encoding="utf-8") as f:
         f.write(json.dumps(data) + "\n")
     return "", 204
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
