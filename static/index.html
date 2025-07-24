@@ -28,7 +28,7 @@
   body {
     margin: 0;
     padding: 0;
-    background: var(--dark-bg); /* Use dark-bg for the main background */
+    background: var(--dark-bg);
     font-family: "Roboto Mono", monospace;
     display: flex;
     flex-direction: column;
@@ -51,19 +51,15 @@
     max-width: 90vw;
     min-height: 60vh;
     padding: 2vw 1.5vw;
-    background-color: #121212; /* Explicitly set container bg */
+    background-color: #121212;
     border-radius: 12px;
     position: relative;
     z-index: 1;
-    box-shadow: 0 0 20px rgba(138, 145, 223, 0.4); /* Restore static glow */
+    box-shadow: 0 0 20px rgba(138, 145, 223, 0.4);
     display: flex;
     flex-direction: column;
     margin-top: 0;
     animation: fadeIn 0.7s;
-  }
-
-  #chat-container::before {
-    content: none; /* Remove animated glow */
   }
 
   #logo {
@@ -86,8 +82,6 @@
     margin-bottom: 12px;
     user-select: text;
     font-size: 1.5rem;
-
-    /* Animated gradient text */
     background: linear-gradient(90deg, var(--pink), var(--blue), var(--soft-blue));
     background-size: 200% auto;
     background-clip: text;
@@ -187,11 +181,10 @@
     flex-grow: 1;
     overflow-y: auto;
     padding: 1vw;
-    border: 1px solid #444;
-    border-radius: 12px;
+    border: none;
+    background: none;
     margin-top: 20px;
     margin-bottom: 20px;
-    background-color: var(--dark-bg);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -202,23 +195,17 @@
   }
 
   .message {
-    max-width: 70%;
-    padding: 12px 18px;
-    border-radius: 20px;
-    position: relative;
-    word-wrap: break-word;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.5s forwards;
-    font-size: 0.95em;
-  }
-
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    background: none;
+    color: inherit;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 0 8px 0;
+    margin: 0;
+    max-width: 100%;
+    font-size: 1em;
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 
   .message .sender-name {
@@ -229,16 +216,12 @@
   }
 
   .message.bot {
-    background-color: #f5f3f7;
-    color: #2b2b2b;
+    background: none;
+    color: #e0d7f3;
     align-self: flex-start;
-    border-bottom-left-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    padding: 10px 15px;
-    max-width: 70%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    user-select: text;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 0 8px 0;
   }
 
   .message.bot .bot-header {
@@ -279,10 +262,12 @@
   }
 
   .message.user {
-    background-color: var(--pink);
-    color: var(--dark-bg);
+    background: none;
+    color: #8a91df;
     align-self: flex-end;
-    border-bottom-right-radius: 4px;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 0 8px 0;
   }
 
   #typing {
@@ -378,11 +363,25 @@
 
   footer {
     text-align: center;
-    color: var(--pink);
+    color: #f5f3f7;
     font-weight: 600;
-    margin-top: 10px;
+    margin-top: 20px;
     user-select: text;
   }
+
+  #chat-container footer {
+  margin-left: -1.5vw;
+  margin-right: -1.5vw;
+  margin-bottom: 0;
+  margin-top: 20px;
+  width: calc(100% + 3vw);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding-bottom: 18px;
+  padding-top: 10px;
+  background: transparent;
+  font-size: 0.85em;
+}
 
   ::-webkit-scrollbar {
     width: 8px;
@@ -398,7 +397,19 @@
     to { opacity: 1; }
   }
 
-  /* Responsive adjustments for tablets and phones */
+  @keyframes flag-bounce {
+  0% { transform: scale(1) rotate(0deg);}
+  20% { transform: scale(1.2) rotate(-10deg);}
+  40% { transform: scale(0.95) rotate(8deg);}
+  60% { transform: scale(1.1) rotate(-6deg);}
+  80% { transform: scale(1.05) rotate(4deg);}
+  100% { transform: scale(1) rotate(0deg);}
+}
+.flag-animate {
+  animation: flag-bounce 0.6s cubic-bezier(.36,1.56,.64,1) both;
+}
+
+/* Responsive adjustments for tablets and phones */
   @media (max-width: 900px) {
     :root {
       --container-width: 95vw;
@@ -412,54 +423,46 @@
   }
 
   @media (max-width: 600px) {
-    #chat-container,
-    #thank-you-page {
-      padding: 2vw 1vw;
-      min-height: 60vh;
+    #chat-container {
+      min-height: 80vh;
+      position: relative;
+      padding-bottom: 70px;
     }
-    #logo {
-      max-width: 70px;
-    }
-    h1 {
-      font-size: 1.1rem;
-    }
-    #name-input {
-      width: 80vw;
-      max-width: 180px;
-      font-size: 0.95rem;
+    #user-input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      background: #121212;
+      padding: 10px 8px 10px 8px;
+      z-index: 10;
+      border-top: 1px solid #333;
+      box-sizing: border-box;
+      border-radius: 0;
+      margin: 0;
     }
     #chat-box {
-      padding: 1vw;
-      font-size: 0.95rem;
-    }
-    #user-input {
-      font-size: 0.95rem;
-      padding: 0.7em 1em;
-    }
-    #send-btn,
-    #end-chat-btn,
-    #restart-chat-btn,
-    #start-new-chat-btn {
-      font-size: 0.95rem;
-      padding: 0.5em 1em;
+      max-height: 45vh;
+      min-height: 30vh;
     }
   }
 
   .message.bot .feedback-div {
-  margin-top: 12px;
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  justify-content: flex-start;
-}
+    margin-top: 12px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: flex-start;
+  }
 
-.message.bot .feedback-div button svg {
-  width: 20px;
-  height: 20px;
-}
+  .message.bot .feedback-div button svg {
+    width: 20px;
+    height: 20px;
+  }
 </style>
 </head>
 <body>
+  <canvas id="silk-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;"></canvas>
   <div id="chat-container">
     <img
       id="logo"
@@ -503,13 +506,20 @@
       <button id="end-chat-btn">End Chat</button>
       <button id="restart-chat-btn" style="display:none;">Restart</button>
     </div>
+
+    <footer style="text-align:center; color:#f5f3f7; font-weight:600; margin-top:100px; user-select:text; font-size:0.89em;">
+  &copy; 2025 Foureight Digital
+</footer>
   </div>
-  <div id="thank-you-page" style="display:none; text-align:center; padding:40px;">
-    <h2>Thank you for chatting with us!</h2>
-    <p>We appreciate your time. If you have more questions, feel free to start a new chat.</p>
-    <button id="start-new-chat-btn" style="padding:10px 25px; border-radius:20px; background:var(--pink); color:var(--dark-bg); font-weight:700; border:none; cursor:pointer;">Start New Chat</button>
+  
+  <div id="end-chat-confirm" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,30,30,0.85); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#222; color:#e0d7f3; padding:32px 24px; border-radius:16px; box-shadow:0 4px 24px #0008; text-align:center; max-width:90vw;">
+      <h3 style="margin-top:0;">End Chat?</h3>
+      <p>Are you sure you want to end the chat?</p>
+      <button id="confirm-end-btn" style="background:#d9534f; color:white; border:none; border-radius:20px; padding:10px 24px; font-weight:700; margin:8px; cursor:pointer;">Yes, End Chat</button>
+      <button id="cancel-end-btn" style="background:#8a91df; color:#222; border:none; border-radius:20px; padding:10px 24px; font-weight:700; margin:8px; cursor:pointer;">Cancel</button>
+    </div>
   </div>
-  <footer>&copy; 2025 Foureight Digital </footer>
 
   <script>
     const botName = "Agent 48";
@@ -526,35 +536,39 @@
     const nameArea = document.getElementById("name-area");
     const sampleQuestions = document.getElementById("sample-questions");
     const chatContainer = document.getElementById("chat-container");
-    const thankYouPage = document.getElementById("thank-you-page");
+    
     const startNewChatBtn = document.getElementById("start-new-chat-btn");
     const logo = document.getElementById("logo");
+    const confirmEndBtn = document.getElementById("confirm-end-btn");
+    const cancelEndBtn = document.getElementById("cancel-end-btn");
+    const endChatConfirm = document.getElementById("end-chat-confirm");
+    let pendingGoodbyeMessage = null;
 
-    // End chat button functionality
-    endChatBtn.addEventListener("click", () => {
-      appendMessage(botName, `Thank you for chatting with us, ${userName}. Have a great day!`);
-      chatContainer.style.display = "none";
-      thankYouPage.style.display = "block";
-    });
+    // Start chat after name submitted
+    nameSubmit.addEventListener("click", () => {
+      const nameVal = nameInput.value.trim();
+      if (nameVal === "") {
+        alert("Please enter your name.");
+        return;
+      }
+      userName = nameVal;
+      nameArea.style.display = "none";
+      sampleQuestions.style.display = "block";
+      sampleQuestions.style.opacity = "1";
+      sampleQuestions.style.pointerEvents = "auto";
+      chatBox.style.display = "flex";
+      userInputArea.style.display = "flex";
+      userInput.focus();
+      logo.style.display = "none";
+      appendMessage(botName, `Welcome ${userName}! How can I help you today?`);
 
-    // Start new chat from thank you page
-    startNewChatBtn.addEventListener("click", () => {
-      chatBox.innerHTML = "";
-      userName = "";
-      nameInput.value = "";
-      thankYouPage.style.display = "none";
-      chatContainer.style.display = "flex";
-      nameArea.style.display = "block";
-      sampleQuestions.style.display = "none";
-      sampleQuestions.style.opacity = "1"; // Reset opacity
-      sampleQuestions.style.pointerEvents = "auto"; // Reset pointer events
-      chatBox.style.display = "none";
-      userInputArea.style.display = "none";
-      endChatBtn.style.display = "inline-block";
-      restartChatBtn.style.display = "none";
-      userInput.value = "";
-      userInput.blur();
-      logo.style.display = "block"; // Show logo again on welcome page
+      // Attach click handlers for sample questions
+      sampleQuestions.querySelectorAll("li").forEach((li) => {
+        li.onclick = () => {
+          userInput.value = li.textContent;
+          sendMessage();
+        };
+      });
     });
 
     // Append message to chat with bot typing animation
@@ -602,38 +616,44 @@
             setTimeout(typeWriter, 18);
           } else {
             messageTextDiv.classList.remove("animated-text");
+
+            // === Add feedback button after typing is done ===
+            const feedbackDiv = document.createElement("div");
+            feedbackDiv.className = "feedback-div";
+
+            const flagDown = document.createElement("button");
+            flagDown.innerHTML = `
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9534f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22V4a2 2 0 0 1 2-2h11l-1.34 4H20a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l1.34-4H6a2 2 0 0 0-2 2v7z"/>
+              </svg>
+            `;
+            flagDown.title = "Report/Not Helpful";
+            flagDown.style.background = "none";
+            flagDown.style.border = "none";
+            flagDown.style.cursor = "pointer";
+            flagDown.style.padding = "0";
+            flagDown.style.display = "flex";
+            flagDown.style.alignItems = "center";
+
+            flagDown.onclick = () => {
+              sendFeedback(text, "down");
+              flagDown.disabled = true;
+              flagDown.querySelector("svg").style.stroke = "#d9534f";
+              // Add animation class
+              flagDown.classList.add("flag-animate");
+              // Remove animation class after animation ends so it can be triggered again
+              flagDown.addEventListener("animationend", () => {
+                flagDown.classList.remove("flag-animate");
+              }, { once: true });
+            };
+
+            feedbackDiv.appendChild(flagDown);
+            messageDiv.appendChild(feedbackDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            // === End feedback button code ===
           }
         }
         typeWriter();
-
-        // Feedback buttons container
-        const feedbackDiv = document.createElement("div");
-        feedbackDiv.className = "feedback-div"; // Use your CSS class for styling
-
-        // Use a "flag" outline icon for negative feedback (Material Design style)
-        const flagDown = document.createElement("button");
-        flagDown.innerHTML = `
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8a91df" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 22V4a2 2 0 0 1 2-2h11l-1.34 4H20a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l1.34-4H6a2 2 0 0 0-2 2v7z"/>
-          </svg>
-        `;
-        flagDown.title = "Report/Not Helpful";
-        flagDown.style.background = "none";
-        flagDown.style.border = "none";
-        flagDown.style.cursor = "pointer";
-        flagDown.style.padding = "0";
-        flagDown.style.display = "flex";
-        flagDown.style.alignItems = "center";
-
-        // Feedback click handler
-        flagDown.onclick = () => {
-          sendFeedback(text, "down");
-          flagDown.disabled = true;
-          flagDown.querySelector("svg").style.stroke = "#d9534f";
-        };
-
-        feedbackDiv.appendChild(flagDown);
-        messageDiv.appendChild(feedbackDiv);
       } else {
         // User message: name + message text (no icon)
         const senderNameDiv = document.createElement("div");
@@ -660,30 +680,17 @@
       typingDiv.textContent = "";
     }
 
-    // Start chat after name submitted
-    nameSubmit.addEventListener("click", () => {
-      const nameVal = nameInput.value.trim();
-      if (nameVal === "") {
-        alert("Please enter your name.");
-        return;
-      }
-      userName = nameVal;
-      nameArea.style.display = "none";
-      sampleQuestions.style.display = "block";
-      sampleQuestions.style.opacity = "1";
-      sampleQuestions.style.pointerEvents = "auto";
-      chatBox.style.display = "flex";
-      userInputArea.style.display = "flex";
-      userInput.focus();
-      logo.style.display = "none"; // Hide logo after starting chat
-
-      appendMessage(botName, `Welcome ${userName}! How can I help you today?`);
-    });
-
     // Send user message and get bot response from backend
     function sendMessage() {
       const message = userInput.value.trim();
       if (!message) return;
+
+      // Check for goodbye
+      if (isGoodbye(message)) {
+        pendingGoodbyeMessage = message;
+        endChatConfirm.style.display = "flex";
+        return;
+      }
 
       if (sampleQuestions.style.display !== "none") {
         sampleQuestions.style.transition = "opacity 0.4s";
@@ -691,7 +698,6 @@
         sampleQuestions.style.pointerEvents = "none";
         setTimeout(() => {
           sampleQuestions.style.display = "none";
-          // Expand chat box and container after suggestions disappear
           chatBox.style.transition = "height 0.4s, margin 0.4s";
           chatBox.style.height = "56vh";
           chatBox.style.maxHeight = "600px";
@@ -739,23 +745,77 @@
       }
     });
 
-    // End chat button functionality (for restart button)
+    // End chat button functionality (shows confirmation modal)
     endChatBtn.addEventListener("click", () => {
-      appendMessage(botName, `Thank you for chatting with us, ${userName}. Have a great day!`);
-      userInputArea.style.display = "none";
-      endChatBtn.style.display = "none";
-      restartChatBtn.style.display = "inline-block";
-      sampleQuestions.style.display = "none";
+      endChatConfirm.style.display = "flex";
     });
 
-    // Restart chat button functionality
+    // Confirm end chat
+    confirmEndBtn.addEventListener("click", () => {
+      endChatConfirm.style.display = "none";
+      if (pendingGoodbyeMessage) {
+        appendMessage(userName, pendingGoodbyeMessage);
+      }
+      appendMessage(botName, `Thank you for chatting with us, ${userName}. Have a great day!`);
+      setTimeout(() => {
+        // Reset chat state for a new chat
+        chatBox.innerHTML = "";
+        userInputArea.style.display = "none";
+        endChatBtn.style.display = "inline-block";
+        restartChatBtn.style.display = "none";
+        sampleQuestions.style.display = "none"; // <--- Hide on restart
+        userInput.value = "";
+        userInput.blur();
+        chatContainer.style.display = "flex";
+        nameArea.style.display = "block";
+        logo.style.display = "block";
+        userName = "";
+        nameInput.value = "";
+        chatBox.style.display = "none";
+        sampleQuestions.style.opacity = "1";
+        sampleQuestions.style.pointerEvents = "auto";
+      }, 2000);
+      pendingGoodbyeMessage = null;
+    });
+
+    // Cancel end chat
+    cancelEndBtn.addEventListener("click", () => {
+      endChatConfirm.style.display = "none";
+      pendingGoodbyeMessage = null;
+      userInput.value = "";
+    });
+
+    // Restart chat button functionality (from inside chat)
     restartChatBtn.addEventListener("click", () => {
       chatBox.innerHTML = "";
       userInputArea.style.display = "flex";
       endChatBtn.style.display = "inline-block";
       restartChatBtn.style.display = "none";
-      sampleQuestions.style.display = "block";
+      sampleQuestions.style.display = "none"; // <--- Hide on restart
+      userInput.value = "";
       userInput.focus();
+      chatContainer.style.display = "flex";
+      nameArea.style.display = "none";
+      logo.style.display = "none";
+    });
+
+    // Start new chat from thank you page
+    startNewChatBtn.addEventListener("click", () => {
+      chatBox.innerHTML = "";
+      userName = "";
+      nameInput.value = "";
+      chatContainer.style.display = "flex";
+      nameArea.style.display = "block";
+      sampleQuestions.style.display = "none";
+      sampleQuestions.style.opacity = "1";
+      sampleQuestions.style.pointerEvents = "auto";
+      chatBox.style.display = "none";
+      userInputArea.style.display = "none";
+      endChatBtn.style.display = "inline-block";
+      restartChatBtn.style.display = "none";
+      userInput.value = "";
+      userInput.blur();
+      logo.style.display = "block";
     });
 
     // Sample questions clickable
@@ -766,6 +826,16 @@
       });
     });
 
+    // Detect goodbye phrases
+    function isGoodbye(message) {
+      const goodbyes = [
+        "bye", "goodbye", "see you", "see ya", "later", "farewell", "talk to you later", "cya", "see u", "take care"
+      ];
+      const msg = message.toLowerCase();
+      return goodbyes.some(phrase => msg.includes(phrase));
+    }
+
+    // Send feedback to backend
     function sendFeedback(botMessage, feedback) {
       fetch('/feedback', {
         method: 'POST',
@@ -773,10 +843,121 @@
         body: JSON.stringify({
           user: userName,
           message: botMessage,
-          feedback: feedback // "up" or "down"
+          feedback: feedback
         })
       });
     }
+  </script>
+  <script>
+const canvas = document.getElementById('silk-bg');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Neon color palette
+const neonColors = ["#8a91df", "#515ccf", "#3c98d9", "#a9b1ff"];
+const LINE_COUNT = 200; // Number of lines
+const lines = [];
+
+function randomBetween(a, b) {
+  return a + Math.random() * (b - a);
+}
+
+// Initialize lines
+function initLines() {
+  lines.length = 0;
+  for (let i = 0; i < LINE_COUNT; i++) {
+    lines.push({
+      x: randomBetween(0, canvas.width),
+      y: randomBetween(-canvas.height, 0),
+      length: randomBetween(30, 120),
+      speed: randomBetween(0.5, 2),
+      color: neonColors[Math.floor(Math.random() * neonColors.length)],
+      glow: randomBetween(16, 40),
+      width: randomBetween(4,8) // Thicker lines: was (1.5, 3.5)
+    });
+  }
+}
+initLines();
+window.addEventListener('resize', initLines);
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#121212";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (let line of lines) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = line.color;
+    ctx.shadowColor = line.color;
+    ctx.shadowBlur = line.glow;
+    ctx.globalAlpha = 0.7;
+    ctx.lineWidth = line.width;
+    ctx.moveTo(line.x, line.y);
+    ctx.lineTo(line.x, line.y + line.length);
+    ctx.stroke();
+    ctx.restore();
+
+    // Move line down
+    line.y += line.speed;
+    // Reset if off screen
+    if (line.y - line.length > canvas.height) {
+      line.x = randomBetween(0, canvas.width);
+      line.y = randomBetween(-40, -line.length);
+      line.length = randomBetween(30, 120);
+      line.speed = randomBetween(0.5, 2);
+      line.color = neonColors[Math.floor(Math.random() * neonColors.length)];
+      line.glow = randomBetween(16, 40);
+      line.width = randomBetween(4, 8);
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+  </script>
+<script>
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+let mouseVisible = false;
+
+// Listen for mouse movement
+canvas.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  mouseVisible = true;
+});
+canvas.addEventListener('mouseleave', () => {
+  mouseVisible = false;
+});
+
+// Patch your draw function to add a glow after drawing the lines
+const originalDraw = draw;
+draw = function() {
+  originalDraw();
+
+  // --- CURSOR GLOW EFFECT ---
+  if (mouseVisible) {
+    ctx.save();
+    ctx.globalAlpha = 0.33;
+    const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 48);
+    gradient.addColorStop(0, "#a9b1ff");
+    gradient.addColorStop(0.4, "#8a91df");
+    gradient.addColorStop(1, "rgba(138,145,223,0)");
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 48, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.restore();
+  }
+  // --- END CURSOR GLOW ---
+};
   </script>
 </body>
 </html>
